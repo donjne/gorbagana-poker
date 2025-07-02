@@ -126,8 +126,6 @@ export interface WalletState {
 }
 
 // Socket event types
-// Add these chat events to your existing SocketEvents interface in src/types/index.ts
-
 export interface SocketEvents {
   // Existing game events
   'join-game': { gameId: string; userId: string };
@@ -136,7 +134,7 @@ export interface SocketEvents {
   'ready-for-next-round': { gameId: string; playerId: string };
   'request-game-state': { gameId: string };
 
-  // NEW: Chat events (Client to Server)
+  // Chat events (Client to Server)
   'join-chat': { gameId: string; playerId: string };
   'leave-chat': { gameId: string; playerId: string };
   'send-chat-message': {
@@ -147,7 +145,7 @@ export interface SocketEvents {
     timestamp: string;
   };
 
-  // Existing server events
+  // Server events
   'game-updated': Game;
   'player-joined': { game: Game; player: Player };
   'player-left': { game: Game; playerId: string };
@@ -158,7 +156,7 @@ export interface SocketEvents {
   'timer-update': { playerId: string; timeRemaining: number };
   'error': { message: string };
 
-  // NEW: Chat events (Server to Client)
+  // Chat events (Server to Client)
   'chat-message': {
     playerId: string;
     playerName: string;
@@ -218,6 +216,69 @@ export interface RegisterUserResponse {
 export interface BaseComponentProps {
   className?: string;
   children?: React.ReactNode;
+}
+
+// Game Board component props
+export interface GameBoardProps {
+  gameId: string;
+  game?: Game | null;
+  className?: string;
+}
+
+export interface MobileGameBoardProps {
+  gameId: string;
+  game?: Game | null;
+  className?: string;
+}
+
+// Game Chat component props
+export interface GameChatProps {
+  gameId: string;
+  players: Player[];
+  currentUser: User | null;
+  compact?: boolean; // Make compact optional
+}
+
+// Mobile Betting Controls props
+export interface MobileBettingControlsProps {
+  currentBet: number;
+  minBet: number;
+  maxBet: number;
+  playerStack: number;
+  potSize: number;
+  onAction: (action: PlayerAction, amount?: number) => Promise<void>;
+  timeRemaining: number;
+  isMyTurn: boolean;
+  canCheck: boolean;
+  callAmount: number;
+}
+
+// Hook return types
+export interface UseWalletReturn {
+  user: User | null;
+  connected: boolean;
+  connecting: boolean;
+  connect: () => Promise<void>;
+  disconnect: () => void;
+  balance: number | null;
+}
+
+export interface UseRealtimeGameReturn {
+  game: Game | null;
+  isConnected: boolean;
+  isSyncing: boolean;
+  sendAction: (actionData: PlayerActionData) => Promise<void>;
+  requestSync: () => void;
+}
+
+export interface UseRealtimeGameOptions {
+  gameId: string;
+  autoJoin?: boolean;
+  onPlayerJoined?: (data: { game: Game; player: Player }) => void;
+  onPlayerLeft?: (data: { game: Game; playerId: string }) => void;
+  onGameUpdated?: (game: Game) => void;
+  onActionBroadcast?: (actionData: PlayerActionData) => void;
+  onRoundEnded?: (data: { game: Game; winner: Player }) => void;
 }
 
 // Game configuration
